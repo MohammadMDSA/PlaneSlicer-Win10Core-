@@ -130,6 +130,7 @@ namespace PlaneSlicerCore
 
 				var rect = new Rect(center.X - rectLenght / 2, center.Y - rectLenght / 2, rectLenght, rectLenght);
 			}
+			SwapChain.Present();
 		}
 	}
 }
