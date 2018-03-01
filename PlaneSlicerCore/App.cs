@@ -28,6 +28,8 @@ namespace PlaneSlicerCore
 		CanvasDevice Device;
 		CompositionGraphicsDevice CompositionGraphicsDevice;
 
+		SwapChainRenderer SwapChainRenderer;
+
 		CancellationTokenSource CancellationTokenSource = new CancellationTokenSource();
 		Random Random = new Random();
 
@@ -57,13 +59,13 @@ namespace PlaneSlicerCore
 
 			CreateDevice();
 
-			// Todo
-			// Todo
-			// Todo
+			this.SwapChainRenderer = new SwapChainRenderer(Compositor);
+			this.SwapChainRenderer.SetDevice(this.Device, new Size(window.Bounds.Width, window.Bounds.Height));
 
+			this.SwapChainRenderer.Visual.Offset = new Vector3((float)window.Bounds.Width, (float)window.Bounds.Height, 0);
+			
 			this.RootVisual = Compositor.CreateContainerVisual();
-			//this.RootVisual.Children.InsertAtTop(//Todo);
-			// Todo
+			this.RootVisual.Children.InsertAtTop(SwapChainRenderer.Visual);
 
 			this.CompositionTarget = Compositor.CreateTargetForCurrentView();
 			this.CompositionTarget.Root = RootVisual;
@@ -77,7 +79,7 @@ namespace PlaneSlicerCore
 
 			while (!token.IsCancellationRequested)
 			{
-				// Todo
+				UpdateVisual(SwapChainRenderer.Visual, SwapChainRenderer.Size);
 
 				await Task.Delay(TimeSpan.FromSeconds(2));
 			}
@@ -140,11 +142,10 @@ namespace PlaneSlicerCore
 				CanvasComposition.SetCanvasDevice(CompositionGraphicsDevice, Device);
 			}
 
-			// Todo
-			//if ()
-			//{
-
-			//}
+			if (SwapChainRenderer != null)
+			{
+				SwapChainRenderer.SetDevice(Device, new Size(Window.Bounds.Width, Window.Bounds.Height));
+			}
 		}
 
 		public void Load(string entryPoint)
@@ -158,7 +159,7 @@ namespace PlaneSlicerCore
 
 		public void Uninitialize()
 		{
-			// Todo
+			this.SwapChainRenderer?.Dispose();
 			this.CancellationTokenSource.Cancel();
 		}
 
@@ -199,7 +200,7 @@ namespace PlaneSlicerCore
 			return new App();
 		}
 
-		public void Main(string[] args)
+		public static void Main(string[] args)
 		{
 			CoreApplication.Run(new ViewSource());
 		}
